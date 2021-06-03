@@ -18,7 +18,15 @@ This is an implementation of Huffman decoding with assembly langauges
 
 ### (3) register의 용도를 픽스하기       
 
-이제부터 특정 register를 특정 용도로만 사용하고 특정 스택의 위치를 특정 용도로만 사용하기로 했습니다. 우선 a1의 register는 output을 저장하는 용도로 사용하는데 32bit가 채워지게 되면 이를 지정된 *outp 에 저장하고 a1은 다시 0으로 초기화를 시킵니다. a0 register는 지금 현재 상황을 keep track하기 위해서 사용합니다. a0 register의 마지막 4 bit은 현재 output이 store된 것이 몇개인지 추적합니다. 만약 마지막 4bit이 5라면 output이 5*4=20 bit만큼 저장되어있는것입니다. 그러므로 마지막 4bit이 8이 되면 그것을 outp 특정 장소에 저장하고 초기화하는 작업이 필요합니다. a5 register는 현재 bit의 상황을 저장합니다. a0의 upper bits는 a5 register의 bit가 몇 개 남았는가를 기록합니다. a5의 길이는 32bit으로 시작하여 bit를 3개, 4개, 5개씩 읽음에 따라 길이가 줄어들게 됩니다. 만약 31만큼 a5를 shift했을 때 0이면 threebit으로 가서 읽고, 30만큼 shift했을 때 2이면 fourbit으로 가서 읽고, 3이면 fivebit으로 가서 읽게 됩니다. 또한 112(sp)는 현재 남은 inbytes를 저장하는데 만약 다음 input이 a5에 모두 올라갔을때를 기준으로 -4씩 감소하여 새롭게 store해줍니다. 28(sp)의 경우 다음 들어와야 할 input을 저장하는 용도로 사용하고 20(sp)는 다음 input의 길이를 저장하는 용도로 사용합니다. 
+이제부터 특정 register를 특정 용도로만 사용하고 특정 스택의 위치를 특정 용도로만 사용하기로 했습니다. 
+* a1: a1의 register는 output을 저장하는 용도로 사용하는데 32bit가 채워지게 되면 이를 지정된 *outp 에 저장하고 a1은 다시 0으로 초기화를 시킵니다. 
+* a0: a0 register는 지금 현재 상황을 keep track하기 위해서 사용합니다. a0 register의 마지막 4 bit은 현재 output이 store된 것이 몇개인지 추적합니다. 만약 마지막 4bit이 5라면 output이 5X4=20 bit만큼 저장되어있는것입니다. 그러므로 마지막 4bit이 8이 되면 그것을 outp 특정 장소에 저장하고 초기화하는 작업이 필요합니다. 
+* a5 register는 현재 bit의 상황을 저장합니다. 
+* a0의 upper bits는 a5 register의 bit가 몇 개 남았는가를 기록합니다. 
+* a5의 길이는 32bit으로 시작하여 bit를 3개, 4개, 5개씩 읽음에 따라 길이가 줄어들게 됩니다. 만약 31만큼 a5를 shift했을 때 0이면 threebit으로 가서 읽고, 30만큼 shift했을 때 2이면 fourbit으로 가서 읽고, 3이면 fivebit으로 가서 읽게 됩니다. 
+* 112(sp)는 현재 남은 inbytes를 저장하는데 만약 다음 input이 a5에 모두 올라갔을때를 기준으로 -4씩 감소하여 새롭게 store해줍니다. 
+* 28(sp)의 경우 다음 들어와야 할 input을 저장하는 용도로 사용합니다.
+* 20(sp)는 다음 input의 길이를 저장하는 용도로 사용합니다. 
 
 ### (4) input을 순차적으로 읽어오기          
 
